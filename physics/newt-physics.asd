@@ -4,4 +4,9 @@
   :author "Jens Thiede"
   :licence "BSD-Style License"
   :components ((:file "physics_package")
-               (:file "presence" :depends-on ("physics_package"))))
+               (:file "tools"
+                :depends-on ("physics_package"))
+               (:file "unit_vector"
+                :depends-on ("physics_package" "tools"))
+               (:file "presence"
+                :depends-on ("physics_package" "unit_vector"))))

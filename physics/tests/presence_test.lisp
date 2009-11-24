@@ -23,4 +23,4 @@
 
 (def-test-method test-calculate-axis ((test presence-test))
   (with-slots (simple-poly octagon) test
-    (assert-equal (calculate-axes simple-poly) nil)))
+    (assert-equal (length (calculate-axes octagon)) 4)))
