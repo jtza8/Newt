@@ -12,19 +12,19 @@
 (defmethod set-up ((test presence-test))
   (with-slots (simple-poly octagon) test
     (setf simple-poly
-          (make-instance 'presence :shape '(#(50 0) #(100 50)
-                                            #(100 80) #(80 200)
-                                            #(0 100)))
+          (make-instance 'presence :points '(#(50 0) #(100 50)
+                                             #(100 80) #(80 200)
+                                             #(0 100)))
           octagon
-          (make-instance 'presence :shape '(#(30 0) #(60 0)
+          (make-instance 'presence :points '(#(30 0) #(60 0)
                                             #(90 30) #(90 60)
                                             #(60 90) #(30 90)
                                             #(0 60) #(0 30))))))
 
 (def-test-method test-calculate-axis ((test presence-test))
   (with-slots (simple-poly octagon) test
-    (assert-equal (length (calculate-axes octagon)) 4)
-    (assert-equal (length (calculate-axes simple-poly)) 5)))
+    (assert-equal (length (axes octagon)) 4)
+    (assert-equal (length (axes simple-poly)) 5)))
 
 (def-test-method test-project-onto-axis ((test presence-test))
   (defun assert-min-max (presence axis expected)
@@ -44,3 +44,14 @@
           (y octagon) 37)
     (assert-min-max octagon (uvector 1.0d0 0.0d0) '(25.0d0 115.0d0))
     (assert-min-max octagon (uvector 0.0d0 1.0d0) '(37.0d0 127.0d0))))
+
+(def-test-method test-collides-with ((test presence-test))
+  (with-slots (simple-poly octagon) test
+    (assert-true (collides-with octagon simple-poly))
+    (setf (x octagon) 100)
+    (assert-true (collides-with octagon simple-poly))
+    (setf (x octagon) 101)
+    (assert-false (collides-with octagon simple-poly))
+    (setf (x octagon) 199
+          (y octagon) 215)
+    (assert-false (collides-with octagon simple-poly))))
