@@ -9,5 +9,7 @@
                 :depends-on ("physics_tests_package"))
                (:file "unit_vector_test"
                 :depends-on ("physics_tests_package"))
+               (:file "point_test"
+                :depends-on ("physics_tests_package"))
                (:file "presence_test"
                 :depends-on ("physics_tests_package"))))

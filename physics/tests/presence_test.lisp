@@ -12,14 +12,14 @@
 (defmethod set-up ((test presence-test))
   (with-slots (simple-poly octagon) test
     (setf simple-poly
-          (make-instance 'presence :points '(#(50 0) #(100 50)
-                                             #(100 80) #(80 200)
-                                             #(0 100)))
+          (make-instance 'presence :points (list (point 50 0) (point 100 50)
+                                                 (point 100 80) (point 80 200)
+                                                 (point 0 100)))
           octagon
-          (make-instance 'presence :points '(#(30 0) #(60 0)
-                                            #(90 30) #(90 60)
-                                            #(60 90) #(30 90)
-                                            #(0 60) #(0 30))))))
+          (make-instance 'presence :points (list (point 30 0) (point 60 0)
+                                                 (point 90 30) (point 90 60)
+                                                 (point 60 90) (point 30 90)
+                                                 (point 0 60) (point 0 30))))))
 
 (def-test-method test-calculate-axis ((test presence-test))
   (with-slots (simple-poly octagon) test

@@ -28,14 +28,9 @@
               (current-point (car points) (car points))
               (axes '()))
              ((eql points '()) axes)
-          (let* ((delta (vector (- (elt previous-point 0)
-                                   (elt current-point 0))
-                                (- (elt previous-point 1)
-                                   (elt current-point 1))))
-                 (radius (sqrt (+ (expt (elt delta 0) 2)
-                                  (expt (elt delta 1) 2)))))
-            (pushnew (uvector (/ (elt delta 0) radius)
-                              (/ (elt delta 1) radius))
+          (let* ((radius (distance previous-point current-point)))
+            (pushnew (uvector (/ (x-delta previous-point current-point) radius)
+                              (/ (y-delta previous-point current-point) radius))
                      axes
                      :test #'uvector-equal)))))
 
@@ -48,8 +43,8 @@
         ((eql points '()) (list (+ minimum offset)
                                 (+ maximum offset)))
       (let* ((point (car points))
-             (dot-product (+ (* (elt point 0) (x axis))
-                             (* (elt point 1) (y axis)))))
+             (dot-product (+ (* (x point) (x axis))
+                             (* (y point) (y axis)))))
         (cond ((eql minimum nil)
                (setf minimum dot-product
                      maximum dot-product))
