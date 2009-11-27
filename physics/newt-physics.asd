@@ -8,7 +8,9 @@
                 :depends-on ("physics_package"))
                (:file "unit_vector"
                 :depends-on ("physics_package" "tools"))
+               (:file "directional_vector"
+                :depends-on ("physics_package"))
                (:file "point"
                 :depends-on ("physics_package"))
-               (:file "presence"
+               (:file "matter"
                 :depends-on ("physics_package" "unit_vector" "point"))))
