@@ -23,6 +23,16 @@
   (with-slots (direction magnitude) dvec
     (* (y direction) magnitude)))
 
+(defun dvector-equal (&rest dvecs)
+  (do ((dvecs dvecs (cdr dvecs)))
+      ((eql (length dvecs) 1) t)
+    (let ((current (car dvecs))
+          (next (cadr dvecs)))
+    (unless (and (uvector-equal (direction current) (direction next))
+                 (almost-equal (magnitude current) (magnitude next)))
+      (return nil)))))
+
+
 (defmethod dvector+ ((dvec-a directional-vector)
                      (dvec-b directional-vector))
   (let* ((x-sum (+ (x-magnitude dvec-a) (x-magnitude dvec-b)))

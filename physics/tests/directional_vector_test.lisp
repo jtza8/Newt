@@ -12,16 +12,20 @@
     (assert-true (almost-equal (x-magnitude dvec) 7.0d0))
     (assert-true (almost-equal (y-magnitude dvec) 2.0d0))))
 
+(def-test-method test-dvector-equal ((test directional-vector-test))
+  (assert-true (dvector-equal #1=(dvector (uvector 0.5d0 0.6d0) 6.34d0) #1#))
+  (assert-false (dvector-equal #1# (dvector (uvector 0.5d0 0.6d0) 6.343d0))))
+
 (def-test-method test-dvector-arithmetic ((test directional-vector-test))
   (let* ((dvec-a (dvector (uvector 1.0d0 0.0d0) 10))
          (dvec-b (dvector (uvector 0.0d0 1.0d0) 10))
          (dvec-c (dvector+ dvec-a dvec-b))
          (dvec-d (dvector- dvec-a dvec-b)))
-    (assert-true (almost-equal (magnitude dvec-c) 14.14213562373095d0))
-    (assert-true (uvector-equal (uvector 0.707106781186548d0
-                                         0.707106781186548d0)
-                                (direction dvec-c)))
-    (assert-true (almost-equal (magnitude dvec-d) 14.14213562373095d0))
-    (assert-true (uvector-equal (uvector 0.707106781186548d0
-                                         -0.707106781186548d0)
-                                (direction dvec-d)))))
+    (assert-true (dvector-equal (dvector (uvector 0.707106781186548d0
+                                                  0.707106781186548d0)
+                                         14.14213562373095d0)
+                                dvec-c))
+    (assert-true (dvector-equal (dvector (uvector 0.707106781186548d0
+                                                  -0.707106781186548d0)
+                                         14.14213562373095d0)
+                                dvec-d))))
