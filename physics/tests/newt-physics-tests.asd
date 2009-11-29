@@ -5,6 +5,8 @@
   :licence "BSD-Style License"
   :depends-on ("newt-physics" "xlunit")
   :components ((:file "physics_tests_package")
+               (:file "test_functions"
+                :depends-on ("physics_tests_package"))
                (:file "tools_test"
                 :depends-on ("physics_tests_package"))
                (:file "unit_vector_test"
@@ -13,5 +15,7 @@
                 :depends-on ("physics_tests_package"))
                (:file "point_test"
                 :depends-on ("physics_tests_package"))
+               (:file "shape_test"
+                :depends-on ("physics_tests_package" "test_functions"))
                (:file "matter_test"
-                :depends-on ("physics_tests_package"))))
+                :depends-on ("physics_tests_package" "test_functions"))))
