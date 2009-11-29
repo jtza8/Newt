@@ -5,21 +5,10 @@
 
 (in-package :newt-physics)
 
-(defclass shape ()
-  ((x :initarg :x
-      :initform 0
-      :accessor x)
-   (y :initarg :y
-      :initform 0
-      :accessor y)
-   (points :initform '()
+(defclass shape (presence)
+  ((points :initform '()
            :initarg :points
-           :reader points)
-   (axes :initform '()
-         :reader axes)))
-
-(defmethod initialize-instance :after ((shape shape) &key)
-  (calculate-axes shape))
+           :reader points)))
 
 (defmethod calculate-axes ((shape shape))
   (setf (slot-value shape 'axes)

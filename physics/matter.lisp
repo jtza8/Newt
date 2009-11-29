@@ -5,18 +5,10 @@
 
 (in-package :newt-physics)
 
-(defclass matter ()
-  ((x :initarg :x
-      :initform 0
-      :accessor x)
-   (y :initarg :y
-      :initform 0
-      :accessor y)
-   (shapes :initform '()
+(defclass matter (presence)
+  ((shapes :initform '()
            :initarg :shapes
            :reader shapes)
-   (axes :initform '()
-         :reader axes)
    (mass :initform 1
          :initarg :mass
          :accessor mass)
@@ -30,6 +22,9 @@
                  :initarg :acceleration
                  :accessor acceleration)))
 
+(defmethod calculate-axes ((matter matter))
+  ())
+
 (defmethod project-onto-axis ((matter matter) axis)
   (with-slots (shapes) matter
     (let ((total-min nil) (total-max nil))
@@ -40,8 +35,10 @@
           (when (or (eql total-min nil) (< min total-min))
             (setf total-min min)))))))
 
-(defmethod collides-with ((matter-one matter) (matter-two matter))
-  ())
+;(defmethod collides-with ((matter-one matter) (matter-two matter))
+;  (with-slots (shapes) matter
+;    (dolist (shape shapes t)
+;      (unless (collides-with )))))
 
 (defmethod calculate-displacement ((matter matter) time)
   (with-slots (displacement velocity acceleration mass) matter

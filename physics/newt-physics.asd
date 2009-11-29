@@ -12,9 +12,11 @@
                 :depends-on ("physics_package"))
                (:file "point"
                 :depends-on ("physics_package"))
+               (:file "presence"
+                :depends-on ("physics_package"))
                (:file "shape"
                 :depends-on ("physics_package" "unit_vector"
-                             "directional_vector" "point"))
+                             "directional_vector" "point" "presence"))
                (:file "matter"
                 :depends-on ("physics_package" "unit_vector"
-                             "directional_vector" "point" "shape"))))
+                             "directional_vector" "point" "shape" "presence"))))
