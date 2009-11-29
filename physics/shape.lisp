@@ -43,9 +43,9 @@
                (setf maximum dot-product)))))))
 
 (defmethod collides-with ((shape-one shape) (shape-two shape))
-  (let ((axes (union (axes shape-one)
-                     (axes shape-two)
-                     :test #'uvector-equal)))
+  (let ((axes (nunion (axes shape-one)
+                      (axes shape-two)
+                      :test #'uvector-equal)))
     (dolist (axis axes t)
       (destructuring-bind (min-one max-one)
           (project-onto-axis shape-one axis)
