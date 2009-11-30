@@ -6,53 +6,78 @@
 (in-package :newt-physics)
 
 (defclass interval ()
-  ((lower :initarg :lower
-          :initform (error "No lower bound specified.")
-          :reader lower)
-   (upper :initarg :upper
-          :initform (error "No upper bound specified.")
-          :reader upper)
-   (lower-inclusive :initarg :lower-inclusive
+  ((left :initarg :left
+          :initform (error "Left-side unspecified.")
+          :reader left)
+   (right :initarg :right
+          :initform (error "Right-side unspecified.")
+          :reader right)
+   (left-closed :initarg :left-closed
                     :initform t
-                    :reader lower-inclusive)
-   (upper-inclusive :initarg :upper-inclusive
+                    :reader left-closed)
+   (right-closed :initarg :right-closed
                     :initform t
-                    :reader upper-inclusive)))
+                    :reader right-closed)))
 
-(defun interval (lower upper &key (lower-inclusive t) (upper-inclusive t))
-  (when (> lower upper) (error "lower bound more than upper bound"))
+(defun interval (left right &key (left-closed t) (right-closed t))
+  (when (> left right) (error "left bound more than right bound"))
   (make-instance 'interval
-                 :lower lower
-                 :upper upper
-                 :lower-inclusive lower-inclusive
-                 :upper-inclusive upper-inclusive))
+                 :left left
+                 :right right
+                 :left-closed left-closed
+                 :right-closed right-closed))
+
+(defmacro interval-side-compare (side-a side-b more-or-less a b)
+  (let ((side-a-closed (intern (format nil "~A-CLOSED" side-a)))
+        (side-b-closed (intern (format nil "~A-CLOSED" side-b))))
+    `(or (,more-or-less (,side-a ,a) (,side-b ,b))
+         (and (or (,side-b-closed ,b)
+                  (and (not (,side-b-closed ,b))
+                       (not (,side-a-closed ,a))))
+              (almost-equal (,side-a ,a) (,side-b ,b))))))
+
+(defun interval-equal (&rest intervals)
+  (do ((intervals intervals (cdr intervals)))
+      ((= (length intervals) 1) t)
+    (let ((current (car intervals))
+          (next (cadr intervals)))
+      (unless (and (eq (left-closed current) (left-closed next))
+                   (eq (right-closed current) (right-closed next))
+                   (almost-equal (left current) (left next))
+                   (almost-equal (right current) (right next)))
+        (return nil)))))
 
 (defmethod expand ((interval interval) numbers
-                   &key (lower-inclusive t) (upper-inclusive t))
-  (let ((lower (lower interval))
-        (upper (upper interval)))
-    (dolist (number numbers (interval lower upper
-                                      :lower-inclusive lower-inclusive
-                                      :upper-inclusive upper-inclusive))
-      (cond ((< number lower) (setf lower number))
-            ((> number upper) (setf upper number))))))
+                   &key (left-closed t) (right-closed t))
+  (let ((left (left interval))
+        (right (right interval)))
+    (dolist (number numbers (interval left right
+                                      :left-closed left-closed
+                                      :right-closed right-closed))
+      (cond ((< number left) (setf left number))
+            ((> number right) (setf right number))))))
 
-(defmethod overlaps ((interval-a interval) (interval-b interval))
-  (or (and (< (lower interval-a) (upper interval-b))
-           (> (upper interval-a) (lower interval-b)))
-      (and (and (lower-inclusive interval-a) (upper-inclusive interval-b))
-           (= (lower interval-a) (upper interval-b)))
-      (and (and (upper-inclusive interval-a) (lower-inclusive interval-b))
-           (= (upper interval-a) (lower interval-b)))))
+(defmethod overlaps ((a interval) (b interval))
+  (and (interval-side-compare left right < a b)
+       (interval-side-compare right left > a b)))
 
-(defmethod within ((interval-a interval) (interval-b interval))
-  (or (and (or (> (lower interval-a) (lower interval-b))
-               (and (or (lower-inclusive interval-b)
-                        (and (not (lower-inclusive interval-b))
-                             (not (lower-inclusive interval-a))))
-                    (= (lower interval-a) (lower interval-b))))
-           (or (< (upper interval-a) (upper interval-b))
-               (and (or (upper-inclusive interval-b)
-                        (and (not (upper-inclusive interval-b))
-                             (not (upper-inclusive interval-a))))
-                    (= (upper interval-a) (upper interval-b)))))))
+(defmethod within ((a interval) (b interval))
+  (and (interval-side-compare left left > a b)
+       (interval-side-compare right right < a b)))
+
+; Destructive.
+(defun clean-interval-set (set)
+  (let ((set (sort set (lambda (a b) 
+                         (interval-side-compare left left < a b)))))
+    (do ((set set (cdr set))
+         (interval (car set))
+         (new-set '()))
+        ((eq set '()))
+      (let ((new-interval (car set)))
+        (cond ((overlaps interval new-interval)
+               (setf interval (expand interval 
+                                      (left new-interval)
+                                      (right new-interval))))
+              (t
+               (push interval new-set)
+               (setf interval new-interval)))))))
