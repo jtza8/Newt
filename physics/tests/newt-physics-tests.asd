@@ -13,6 +13,8 @@
                 :depends-on ("physics_tests_package"))
                (:file "directional_vector_test"
                 :depends-on ("physics_tests_package"))
+               (:file "interval_test"
+                :depends-on ("physics_tests_package"))
                (:file "point_test"
                 :depends-on ("physics_tests_package"))
                (:file "shape_test"

@@ -12,6 +12,8 @@
                 :depends-on ("physics_package"))
                (:file "point"
                 :depends-on ("physics_package"))
+               (:file "interval"
+                :depends-on ("physics_package"))
                (:file "presence"
                 :depends-on ("physics_package"))
                (:file "shape"
