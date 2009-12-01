@@ -12,7 +12,7 @@
 (defmethod set-up ((test matter-test))
   (let ((simple-poly (make-instance 'shape
                                     :points (list (point 50 0) (point 100 50)
-                                                  (point 100 80) (point 80 200)
+                                                  (point 100 80) (point 80 200);
                                                   (point 0 100))))
         (octagon (make-instance 'shape
                                 :x 15

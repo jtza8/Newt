@@ -20,7 +20,7 @@
                     :reader right-closed)))
 
 (defun interval (left right &key (left-closed t) (right-closed t))
-  (when (> left right) (error "left bound more than right bound"))
+  (when (> left right) (error "Left more than right."))
   (make-instance 'interval
                  :left left
                  :right right
@@ -37,10 +37,10 @@
               (almost-equal (,side-a ,a) (,side-b ,b))))))
 
 (defun interval-equal (&rest intervals)
-  (do ((intervals intervals (cdr intervals)))
-      ((= (length intervals) 1) t)
-    (let ((current (car intervals))
-          (next (cadr intervals)))
+  (do ((loop-intervals intervals (cdr loop-intervals)))
+      ((= (length loop-intervals) 1) t)
+    (let ((current (car loop-intervals))
+          (next (cadr loop-intervals)))
       (unless (and (eq (left-closed current) (left-closed next))
                    (eq (right-closed current) (right-closed next))
                    (almost-equal (left current) (left next))
@@ -65,19 +65,22 @@
   (and (interval-side-compare left left > a b)
        (interval-side-compare right right < a b)))
 
+(defmethod print-object (object stream)
+  ())
+
 ; Destructive.
-(defun clean-interval-set (set)
-  (let ((set (sort set (lambda (a b) 
-                         (interval-side-compare left left < a b)))))
-    (do ((set set (cdr set))
-         (interval (car set))
-         (new-set '()))
-        ((eq set '()))
-      (let ((new-interval (car set)))
-        (cond ((overlaps interval new-interval)
-               (setf interval (expand interval 
-                                      (left new-interval)
-                                      (right new-interval))))
-              (t
-               (push interval new-set)
-               (setf interval new-interval)))))))
+;(defun fuse-interval-set (set)
+;  (let ((set (sort set (lambda (a b) 
+;                         (interval-side-compare left left < a b)))))
+;    (do ((loop-set set (cdr loop-set))
+;         (interval (car loop-set))
+;         (new-set '()))
+;        ((= (length loop-set) 1))
+;      (let ((new-interval (car loop-set)))
+;        (cond ((overlaps interval new-interval)))))))
+;               (setf interval (expand interval 
+;                                      (left new-interval)
+;                                      (right new-interval))))
+;              (t
+;               (push interval new-set)
+;               (setf interval new-interval)))))))

@@ -66,9 +66,12 @@
     (assert-true (within e e))
     (assert-true (within f b))))
 
-;(def-test test-clean-interval-set ((test interval-test))
+;(def-test test-fuse-interval-set ((test interval-test))
 ;  (let ((interval-set (list (interval -10 6)
 ;                            (interval 3 8)
 ;                            (interval 10 23)
 ;                            (interval 9 50))))
-;    (assert-
+;    (assert-equal 0 (length (intersection (fuse-interval-set interval-set)
+;                                          (list (interval -10 8)
+;                                                (interval 10 50))
+;                                          :test #'interval-equal)))))
