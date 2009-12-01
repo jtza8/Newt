@@ -66,6 +66,19 @@
     (assert-true (within e e))
     (assert-true (within f b))))
 
+(def-test-method test-print-object ((test interval-test))
+  (assert-equal "(interval 0.001d0 0.5d0)"
+                (print-object (interval 0.001d0 0.5d0) nil))
+  (assert-equal "(interval 0.1d0 0.5d0 :left-closed NIL)"
+                (print-object (interval 0.1d0 0.5d0 :left-closed nil) nil))
+  (assert-equal "(interval 0.1d0 0.5d0 :right-closed NIL)"
+                (print-object (interval 0.1d0 0.5d0 :right-closed nil) nil))
+  (assert-equal "(interval 0.1d0 0.5d0 :left-closed NIL :right-closed NIL)"
+                (print-object (interval 0.1d0 0.5d0
+                                        :left-closed nil
+                                        :right-closed nil)
+                              nil)))
+
 ;(def-test test-fuse-interval-set ((test interval-test))
 ;  (let ((interval-set (list (interval -10 6)
 ;                            (interval 3 8)

@@ -65,8 +65,11 @@
   (and (interval-side-compare left left > a b)
        (interval-side-compare right right < a b)))
 
-(defmethod print-object (object stream)
-  ())
+(defmethod print-object ((interval interval) stream)
+  (with-slots (left right left-closed right-closed) interval
+    (format stream
+            "(interval ~a ~a~:[ :left-closed NIL~;~]~:[ :right-closed NIL~;~])"
+            left right left-closed right-closed)))
 
 ; Destructive.
 ;(defun fuse-interval-set (set)
@@ -83,4 +86,4 @@
 ;                                      (right new-interval))))
 ;              (t
 ;               (push interval new-set)
-;               (setf interval new-interval)))))))
+;               (setf interval new-interval))))))))
