@@ -34,24 +34,24 @@
 
 ;(def-test-method test-project-onto-axis ((test matter-test))
 ;  (with-slots (simple-matter compound-matter) test
-;    (assert-min-max simple-matter
+;    (assert-set-projection simple-matter
 ;                    (uvector 1.0d0 0.0d0)
 ;                    (interval 0.0d0 100.0d0))
-;    (assert-min-max simple-matter
+;    (assert-set-projection simple-matter
 ;                    (uvector 0.0d0 1.0d0)
 ;                    (interval 0.0d0 200.0d0))
-;    (assert-min-max compound-matter
+;    (assert-set-projection compound-matter
 ;                    (uvector 1.0d0 0.0d0)
 ;                    (interval 0.0d0 105.0d0))
-;    (assert-min-max compound-matter
+;    (assert-set-projection compound-matter
 ;                    (uvector 0.0d0 1.0d0)
 ;                    (interval 0.0d0 290.0d0))
 ;    (setf (x compound-matter) 25
 ;          (y compound-matter) 82)
-;    (assert-min-max compound-matter
+;    (assert-set-projection compound-matter
 ;                    (uvector 1.0d0 0.0d0)
 ;                    (interval 25.0d0 130.0d0))
-;    (assert-min-max compound-matter
+;    (assert-set-projection compound-matter
 ;                    (uvector 0.0d0 1.0d0)
 ;                    (interval 82.0d0 372.0d0))))
 

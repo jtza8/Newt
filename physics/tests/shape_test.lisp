@@ -28,17 +28,17 @@
 
 (def-test-method test-project-onto-axis ((test shape-test))
   (with-slots (simple-poly octagon) test
-    (assert-min-max octagon (uvector 0.0d0 1.0d0) (interval 0.0d0 90.0d0))
-    (assert-min-max octagon (uvector 1.0d0 0.0d0) (interval 0.0d0 90.0d0))
-    (assert-min-max simple-poly (uvector 1.0d0 0.0d0) (interval 0.0d0 100.0d0))
-    (assert-min-max simple-poly (uvector 0.0d0 1.0d0) (interval 0.0d0 200.0d0))
-    (assert-min-max octagon
+    (assert-projection octagon (uvector 0.0d0 1.0d0) (interval 0.0d0 90.0d0))
+    (assert-projection octagon (uvector 1.0d0 0.0d0) (interval 0.0d0 90.0d0))
+    (assert-projection simple-poly (uvector 1.0d0 0.0d0) (interval 0.0d0 100.0d0))
+    (assert-projection simple-poly (uvector 0.0d0 1.0d0) (interval 0.0d0 200.0d0))
+    (assert-projection octagon
                     (uvector 0.707106781186548d0 0.707106781186548d0)
                     (interval 21.213203435596426d0 106.066017177982136d0))
     (setf (x octagon) 25
           (y octagon) 37)
-    (assert-min-max octagon (uvector 1.0d0 0.0d0) (interval 25.0d0 115.0d0))
-    (assert-min-max octagon (uvector 0.0d0 1.0d0) (interval 37.0d0 127.0d0))))
+    (assert-projection octagon (uvector 1.0d0 0.0d0) (interval 25.0d0 115.0d0))
+    (assert-projection octagon (uvector 0.0d0 1.0d0) (interval 37.0d0 127.0d0))))
 
 (def-test-method test-collides-with ((test shape-test))
   (with-slots (simple-poly octagon) test
