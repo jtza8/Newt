@@ -8,5 +8,4 @@
 (defun assert-min-max (projectable axis expected)
   (let* ((min-max (project-onto-axis projectable axis))
          (message (format nil "Expected: ~a Got: ~a" expected min-max)))
-    (assert-true (almost-equal (car expected) (car min-max)) message)
-    (assert-true (almost-equal (cadr expected) (cadr min-max)) message)))
+    (assert-true (interval-equal expected min-max) message)))

@@ -10,13 +10,9 @@
 
 (def-test-method test-interval-equal ((test interval-test))
   (let ((a (interval -5 7))
-        (b (interval 3 9))
-        (c (interval -5 7 :left-closed nil))
-        (d (interval -5 7 :right-closed nil)))
+        (b (interval 3 9)))
     (assert-true (interval-equal a a))
-    (assert-false (interval-equal a b))
-    (assert-false (interval-equal a c))
-    (assert-false (interval-equal a d))))
+    (assert-false (interval-equal a b))))
 
 (def-test-method test-interval-side-compare ((test interval-test))
   (let ((a (interval 2 4))
@@ -28,56 +24,34 @@
   (let ((interval (interval 3 5)))
     (assert-equal 3 (left interval))
     (assert-equal 5 (right interval))
-    (setf interval (expand interval '(8 -1)))
+    (expand interval 8 -1)
     (assert-equal -1 (left interval))
     (assert-equal 8 (right interval))))
 
 (def-test-method test-overlaps ((test interval-test))
   (let ((a (interval -100 100))
         (b (interval 50 200))
-        (c (interval 30 50 :right-closed nil))
-        (d (interval 100 520 :left-closed nil))
-        (e (interval -10 50))
-        (f (interval 200 700)))
+        (c (interval -10 50))
+        (d (interval 200 700)))
     (assert-true (overlaps a b))
     (assert-true (overlaps b a))
-    (assert-false (overlaps b c))
-    (assert-false (overlaps a d))
-    (assert-true (overlaps b e))
-    (assert-true (overlaps b f))))
+    (assert-true (overlaps b c))
+    (assert-true (overlaps b d))))
 
 (def-test-method test-within ((test interval-test))
   (let ((a (interval 3 7))
         (b (interval -100 100))
         (c (interval 95 123))
-        (d (interval -123 -95))
-        (e (interval 7 123
-                              :left-closed nil
-                              :right-closed nil))
-        (f (interval -100 100
-                              :left-closed nil
-                              :right-closed nil)))
+        (d (interval -123 -95)))
     (assert-true (within a b))
     (assert-true (within b b))
     (assert-false (within b a))
     (assert-false (within c b))
-    (assert-false (within d b))
-    (assert-false (within a e))
-    (assert-true (within e e))
-    (assert-true (within f b))))
+    (assert-false (within d b))))
 
 (def-test-method test-print-object ((test interval-test))
   (assert-equal "(interval 0.001d0 0.5d0)"
-                (print-object (interval 0.001d0 0.5d0) nil))
-  (assert-equal "(interval 0.1d0 0.5d0 :left-closed NIL)"
-                (print-object (interval 0.1d0 0.5d0 :left-closed nil) nil))
-  (assert-equal "(interval 0.1d0 0.5d0 :right-closed NIL)"
-                (print-object (interval 0.1d0 0.5d0 :right-closed nil) nil))
-  (assert-equal "(interval 0.1d0 0.5d0 :left-closed NIL :right-closed NIL)"
-                (print-object (interval 0.1d0 0.5d0
-                                        :left-closed nil
-                                        :right-closed nil)
-                              nil)))
+                (print-object (interval 0.001d0 0.5d0) nil)))
 
 (def-test-method test-sort-interval-set ((test interval-test))
   (let* ((a (list (interval 34 43) (interval 1 35) (interval 12 23)))
@@ -99,8 +73,10 @@
                                           :test #'interval-equal)))))
 
 (def-test-method test-interval-sets-overlap ((test interval-test))
-  (let ((a (list (interval 3 4)
-                 (interval 30 54)))
-        (b (list (interval 4 12)
-                 (interval 20 31))))
-    (assert-true (interval-sets-overlap a b))))
+  (let* ((a (list (interval 30 54)
+                  (interval 3 4)))
+         (b (list (interval 4 12)
+                  (interval 20 31)))
+         (c (append a (list (interval 60 72)))))
+    (assert-true (interval-sets-overlap a b))
+    (assert-false (interval-sets-overlap c b))))

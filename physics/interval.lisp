@@ -11,49 +11,28 @@
           :reader left)
    (right :initarg :right
           :initform (error "Right-side unspecified.")
-          :reader right)
-   (left-closed :initarg :left-closed
-                    :initform t
-                    :reader left-closed)
-   (right-closed :initarg :right-closed
-                    :initform t
-                    :reader right-closed)))
+          :reader right)))
 
-(defun interval (left right &key (left-closed t) (right-closed t))
+(defun interval (left right)
   (when (> left right) (error "Left more than right."))
-  (make-instance 'interval
-                 :left left
-                 :right right
-                 :left-closed left-closed
-                 :right-closed right-closed))
+  (make-instance 'interval :left left :right right))
 
 (defmacro interval-side-compare (side-a side-b more-or-less a b)
-  (let ((side-a-closed (intern (format nil "~A-CLOSED" side-a)))
-        (side-b-closed (intern (format nil "~A-CLOSED" side-b))))
-    `(or (,more-or-less (,side-a ,a) (,side-b ,b))
-         (and (or (,side-b-closed ,b)
-                  (and (not (,side-b-closed ,b))
-                       (not (,side-a-closed ,a))))
-              (almost-equal (,side-a ,a) (,side-b ,b))))))
+  `(or (,more-or-less (,side-a ,a) (,side-b ,b))
+       (almost-equal (,side-a ,a) (,side-b ,b))))
 
 (defun interval-equal (&rest intervals)
   (do ((loop-intervals intervals (cdr loop-intervals)))
       ((= (length loop-intervals) 1) t)
     (let ((current (car loop-intervals))
           (next (cadr loop-intervals)))
-      (unless (and (eq (left-closed current) (left-closed next))
-                   (eq (right-closed current) (right-closed next))
-                   (almost-equal (left current) (left next))
+      (unless (and (almost-equal (left current) (left next))
                    (almost-equal (right current) (right next)))
         (return nil)))))
 
-(defmethod expand ((interval interval) numbers
-                   &key (left-closed t) (right-closed t))
-  (let ((left (left interval))
-        (right (right interval)))
-    (dolist (number numbers (interval left right
-                                      :left-closed left-closed
-                                      :right-closed right-closed))
+(defmethod expand ((interval interval) &rest numbers)
+  (with-slots (left right) interval
+    (dolist (number numbers interval)
       (cond ((< number left) (setf left number))
             ((> number right) (setf right number))))))
 
@@ -66,10 +45,8 @@
        (interval-side-compare right right < a b)))
 
 (defmethod print-object ((interval interval) stream)
-  (with-slots (left right left-closed right-closed) interval
-    (format stream
-            "(interval ~a ~a~:[ :left-closed NIL~;~]~:[ :right-closed NIL~;~])"
-            left right left-closed right-closed)))
+  (with-slots (left right) interval
+    (format stream "(interval ~a ~a)" left right)))
 
 (defun sort-interval-set (set)
   (sort (copy-seq set)
@@ -85,15 +62,13 @@
       (let ((new-interval (car loop-set)))
         (cond ((overlaps interval new-interval)
                (setf interval (expand interval
-                                      (list (left new-interval)
-                                            (right new-interval)))))
+                                      (left new-interval)
+                                      (right new-interval))))
               (t
                (push interval new-set)
                (setf interval new-interval)))))))
 
 (defun interval-sets-overlap (a b)
-  (do ((loop-a (sort-interval-set a) (cdr loop-a))
-       (loop-b (sort-interval-set b) (cdr loop-b)))
-      ((or (eq loop-a nil) (eq loop-b nil)) t)
-    (unless (overlaps (car loop-a) (car loop-b))
+  (dolist (element a t)
+    (unless (find element b :test #'overlaps)
       (return nil))))
