@@ -71,19 +71,29 @@
             "(interval ~a ~a~:[ :left-closed NIL~;~]~:[ :right-closed NIL~;~])"
             left right left-closed right-closed)))
 
-; Destructive.
-;(defun fuse-interval-set (set)
-;  (let ((set (sort set (lambda (a b) 
-;                         (interval-side-compare left left < a b)))))
-;    (do ((loop-set set (cdr loop-set))
-;         (interval (car loop-set))
-;         (new-set '()))
-;        ((= (length loop-set) 1))
-;      (let ((new-interval (car loop-set)))
-;        (cond ((overlaps interval new-interval)))))))
-;               (setf interval (expand interval 
-;                                      (left new-interval)
-;                                      (right new-interval))))
-;              (t
-;               (push interval new-set)
-;               (setf interval new-interval))))))))
+(defun sort-interval-set (set)
+  (sort (copy-seq set)
+        (lambda (a b)
+          (interval-side-compare left left < a b))))
+
+(defun fuse-interval-set (set)
+  (let ((set (sort-interval-set set)))
+    (do ((loop-set set (cdr loop-set))
+         (interval (car set))
+         (new-set '()))
+        ((= (length loop-set) 1))
+      (let ((new-interval (car loop-set)))
+        (cond ((overlaps interval new-interval)
+               (setf interval (expand interval
+                                      (list (left new-interval)
+                                            (right new-interval)))))
+              (t
+               (push interval new-set)
+               (setf interval new-interval)))))))
+
+(defun interval-sets-overlap (a b)
+  (do ((loop-a (sort-interval-set a) (cdr loop-a))
+       (loop-b (sort-interval-set b) (cdr loop-b)))
+      ((or (eq loop-a nil) (eq loop-b nil)) t)
+    (unless (overlaps (car loop-a) (car loop-b))
+      (return nil))))
