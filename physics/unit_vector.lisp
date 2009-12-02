@@ -16,8 +16,8 @@
 (defmethod initialize-instance :after ((unit-vector unit-vector) &key)
   (with-slots (x y) unit-vector
     (cond ((< x 0) (setf x (- x) y (- y)))
-          ((almost-equal x 0.0d0) (setf x 0.0d0 y 1.0d0))
-          ((almost-equal y 0.0d0) (setf x 1.0d0 y 0.0d0)))))
+          ((equal-enough x 0.0d0) (setf x 0.0d0 y 1.0d0))
+          ((equal-enough y 0.0d0) (setf x 1.0d0 y 0.0d0)))))
 
 (defun uvector (x y)
   (make-instance 'unit-vector :x x :y y))
@@ -27,6 +27,6 @@
       ((eql (length uvecs) 1) t)
     (let ((current (car uvecs))
           (next (cadr uvecs)))
-    (unless (and (almost-equal (x current) (x next))
-                 (almost-equal (y current) (y next)))
+    (unless (and (equal-enough (x current) (x next))
+                 (equal-enough (y current) (y next)))
       (return nil)))))

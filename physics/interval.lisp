@@ -17,17 +17,13 @@
   (when (> left right) (error "Left more than right."))
   (make-instance 'interval :left left :right right))
 
-(defmacro interval-side-compare (side-a side-b more-or-less a b)
-  `(or (,more-or-less (,side-a ,a) (,side-b ,b))
-       (almost-equal (,side-a ,a) (,side-b ,b))))
-
 (defun interval-equal (&rest intervals)
   (do ((loop-intervals intervals (cdr loop-intervals)))
       ((= (length loop-intervals) 1) t)
     (let ((current (car loop-intervals))
           (next (cadr loop-intervals)))
-      (unless (and (almost-equal (left current) (left next))
-                   (almost-equal (right current) (right next)))
+      (unless (and (equal-enough (left current) (left next))
+                   (equal-enough (right current) (right next)))
         (return nil)))))
 
 (defmethod expand ((interval interval) &rest numbers)
@@ -37,12 +33,12 @@
             ((> number right) (setf right number))))))
 
 (defmethod overlaps ((a interval) (b interval))
-  (and (interval-side-compare left right < a b)
-       (interval-side-compare right left > a b)))
+  (and (equal-enough-or < (left a) (right b))
+       (equal-enough-or > (right a) (left b))))
 
 (defmethod within ((a interval) (b interval))
-  (and (interval-side-compare left left > a b)
-       (interval-side-compare right right < a b)))
+  (and (equal-enough-or > (left a) (left b))
+       (equal-enough-or < (right a) (right b))))
 
 (defmethod print-object ((interval interval) stream)
   (with-slots (left right) interval
@@ -51,7 +47,7 @@
 (defun sort-interval-set (set)
   (sort (copy-seq set)
         (lambda (a b)
-          (interval-side-compare left left < a b))))
+          (equal-enough-or < (left a) (left b)))))
 
 (defun fuse-interval-set (set)
   (let ((set (sort-interval-set set)))

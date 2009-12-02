@@ -30,7 +30,7 @@
     (let ((current (car dvecs))
           (next (cadr dvecs)))
     (unless (and (uvector-equal (direction current) (direction next))
-                 (almost-equal (magnitude current) (magnitude next)))
+                 (equal-enough (magnitude current) (magnitude next)))
       (return nil)))))
 
 

@@ -14,12 +14,6 @@
     (assert-true (interval-equal a a))
     (assert-false (interval-equal a b))))
 
-(def-test-method test-interval-side-compare ((test interval-test))
-  (let ((a (interval 2 4))
-        (b (interval 3 5)))
-    (assert-true (interval-side-compare left left < a a))
-    (assert-false (interval-side-compare left left > a b))))
-
 (def-test-method test-expand ((test interval-test))
   (let ((interval (interval 3 5)))
     (assert-equal 3 (left interval))
@@ -48,10 +42,6 @@
     (assert-false (within b a))
     (assert-false (within c b))
     (assert-false (within d b))))
-
-(def-test-method test-print-object ((test interval-test))
-  (assert-equal "(interval 0.001d0 0.5d0)"
-                (print-object (interval 0.001d0 0.5d0) nil)))
 
 (def-test-method test-sort-interval-set ((test interval-test))
   (let* ((a (list (interval 34 43) (interval 1 35) (interval 12 23)))

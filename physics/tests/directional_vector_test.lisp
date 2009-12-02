@@ -10,8 +10,8 @@
 
 (def-test-method test-magnitude ((test directional-vector-test))
   (let ((dvec (dvector (uvector 0.7d0 0.2d0) 10)))
-    (assert-true (almost-equal (x-magnitude dvec) 7.0d0))
-    (assert-true (almost-equal (y-magnitude dvec) 2.0d0))))
+    (assert-true (equal-enough (x-magnitude dvec) 7.0d0))
+    (assert-true (equal-enough (y-magnitude dvec) 2.0d0))))
 
 (def-test-method test-dvector-equal ((test directional-vector-test))
   (assert-true (dvector-equal #1=(dvector (uvector 0.5d0 0.6d0) 6.34d0) #1#))
