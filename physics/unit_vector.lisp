@@ -23,10 +23,9 @@
   (make-instance 'unit-vector :x x :y y))
 
 (defun uvector-equal (&rest uvecs)
-  (do ((uvecs uvecs (cdr uvecs)))
-      ((eql (length uvecs) 1) t)
-    (let ((current (car uvecs))
-          (next (cadr uvecs)))
-    (unless (and (equal-enough (x current) (x next))
+  (loop
+     for current in uvecs and next in (cdr uvecs)
+     unless (and (equal-enough (x current) (x next))
                  (equal-enough (y current) (y next)))
-      (return nil)))))
+       do (return nil)
+     finally (return t)))

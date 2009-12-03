@@ -10,13 +10,12 @@
          (message (format nil "Expected: ~a Got: ~a" expected interval)))
     (assert-true (interval-equal expected interval) message)))
 
-(defun assert-set-projection (matter axis expected)
-  (let* ((actual (project-onto-axis matter axis))
-         (message (format nil "Expected: ~a Got: ~a" expected actual)))
-    (assert-equal (length expected) (length actual))
-    (do ((loop-expected expected (cdr loop-expected))
-         (loop-actual actual (cdr actual)))
-        ((or (eq (car loop-expected) '())
-             (eq (car loop-actual) '())))
-      (assert-true (interval-equal (car loop-expected) (car loop-actual))
-                   message))))
+(defun assert-set-projection (matter axis expected-list)
+  (let* ((actual-list (sort-interval-set (project-onto-axis matter axis)))
+         (expected-list (sort-interval-set expected-list))
+         (message (format nil "Expected: ~a Got: ~a"
+                          expected-list actual-list)))
+    (assert-equal (length expected-list) (length actual-list) message)
+    (loop
+       for expected in expected-list and actual in actual-list
+       do (assert-true (interval-equal expected actual) message))))

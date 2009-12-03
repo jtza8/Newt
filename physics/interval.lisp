@@ -18,13 +18,12 @@
   (make-instance 'interval :left left :right right))
 
 (defun interval-equal (&rest intervals)
-  (do ((loop-intervals intervals (cdr loop-intervals)))
-      ((= (length loop-intervals) 1) t)
-    (let ((current (car loop-intervals))
-          (next (cadr loop-intervals)))
-      (unless (and (equal-enough (left current) (left next))
-                   (equal-enough (right current) (right next)))
-        (return nil)))))
+  (loop
+     for current in intervals and next in (cdr intervals)
+     unless (and (equal-enough (left current) (left next))
+                 (equal-enough (right current) (right next)))
+     do (return nil)
+     finally (return t)))
 
 (defmethod expand ((interval interval) &rest numbers)
   (with-slots (left right) interval
@@ -50,19 +49,15 @@
           (equal-enough-or < (left a) (left b)))))
 
 (defun fuse-interval-set (set)
-  (let ((set (sort-interval-set set)))
-    (do ((loop-set set (cdr loop-set))
-         (interval (car set))
-         (new-set '()))
-        ((= (length loop-set) 1))
-      (let ((new-interval (car loop-set)))
-        (cond ((overlaps interval new-interval)
-               (setf interval (expand interval
-                                      (left new-interval)
-                                      (right new-interval))))
-              (t
-               (push interval new-set)
-               (setf interval new-interval)))))))
+  (loop
+     with sorted-set = (sort-interval-set set) and fused-set = '()
+     with current-interval = (car sorted-set)
+     for new-interval in (cdr sorted-set)
+     if (overlaps current-interval new-interval)
+       do (expand current-interval (left new-interval) (right new-interval))
+     else
+       do (progn (push current-interval fused-set)
+                 (setf current-interval new-interval))))
 
 (defun interval-sets-overlap (a b)
   (dolist (element a t)

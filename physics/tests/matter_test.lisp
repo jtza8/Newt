@@ -32,17 +32,18 @@
     (assert-equal 5 (length (axes simple-matter)))
     (assert-equal 7 (length (axes compound-matter)))))
 
-;(def-test-method test-project-onto-axis ((test matter-test))
-;  (with-slots (simple-matter compound-matter) test
-;    (assert-set-projection simple-matter
-;                    (uvector 1.0d0 0.0d0)
-;                    (interval 0.0d0 100.0d0))
-;    (assert-set-projection simple-matter
-;                    (uvector 0.0d0 1.0d0)
-;                    (interval 0.0d0 200.0d0))
-;    (assert-set-projection compound-matter
-;                    (uvector 1.0d0 0.0d0)
-;                    (interval 0.0d0 105.0d0))
+(def-test-method test-project-onto-axis ((test matter-test))
+  (with-slots (simple-matter compound-matter) test
+    (assert-set-projection simple-matter
+                    (uvector 1.0d0 0.0d0)
+                    (list (interval 0.0d0 100.0d0)))
+    (assert-set-projection simple-matter
+                    (uvector 0.0d0 1.0d0)
+                    (list (interval 0.0d0 200.0d0)))
+    (assert-set-projection compound-matter
+                    (uvector 1.0d0 0.0d0)
+                    (list (interval 0.0d0 100.0d0)
+                          (interval 15.0d0 105.0d0)))))
 ;    (assert-set-projection compound-matter
 ;                    (uvector 0.0d0 1.0d0)
 ;                    (interval 0.0d0 290.0d0))

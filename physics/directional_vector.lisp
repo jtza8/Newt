@@ -25,14 +25,12 @@
     (* (y direction) magnitude)))
 
 (defun dvector-equal (&rest dvecs)
-  (do ((dvecs dvecs (cdr dvecs)))
-      ((eql (length dvecs) 1) t)
-    (let ((current (car dvecs))
-          (next (cadr dvecs)))
-    (unless (and (uvector-equal (direction current) (direction next))
+  (loop
+     for current in dvecs and next in (cdr dvecs)
+     unless (and (uvector-equal (direction current) (direction next))
                  (equal-enough (magnitude current) (magnitude next)))
-      (return nil)))))
-
+       do (return nil)
+     finally (return t)))
 
 (defmethod dvector+ ((dvec-a directional-vector)
                      (dvec-b directional-vector))

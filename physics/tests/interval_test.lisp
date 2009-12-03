@@ -12,6 +12,7 @@
   (let ((a (interval -5 7))
         (b (interval 3 9)))
     (assert-true (interval-equal a a))
+    (assert-true (interval-equal b b b))
     (assert-false (interval-equal a b))))
 
 (def-test-method test-expand ((test interval-test))
@@ -44,13 +45,12 @@
     (assert-false (within d b))))
 
 (def-test-method test-sort-interval-set ((test interval-test))
-  (let* ((a (list (interval 34 43) (interval 1 35) (interval 12 23)))
-         (b (list (interval 1 35) (interval 12 23) (interval 34 43)))
-         (c (sort-interval-set a)))
-    (do ((loop-b b (cdr loop-b))
-         (loop-c c (cdr loop-c)))
-        ((or (eq loop-b nil) (eq loop-c nil)))
-      (assert-true (interval-equal (car loop-b) (car loop-c))))))
+  (loop
+     for a in (list (interval 1 35) (interval 12 23) (interval 34 43))
+     and b in (sort-interval-set (list (interval 34 43)
+                                       (interval 1 35)
+                                       (interval 12 23)))
+     doing (assert-true a b)))
 
 (def-test-method test-fuse-interval-set ((test interval-test))
   (let ((set (list (interval -10 6)

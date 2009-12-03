@@ -8,12 +8,11 @@
 (defparameter *equal-enough-accuracy* 8)
 
 (defun equal-enough-upto (accuracy &rest floats)
-  (do ((floats floats (cdr floats)))
-      ((= (length floats) 1) t)
-    (let ((current (car floats))
-          (next (cadr floats)))
-      (when (> (abs (- current next)) (expt 10 (- (1+ accuracy))))
-        (return nil)))))
+  (loop
+     for current in floats and next in (cdr floats)
+     when (> (abs (- current next)) (expt 10 (- (1+ accuracy))))
+       do (return nil)
+     finally (return t)))
 
 (defun equal-enough (&rest floats)
   (apply #'equal-enough-upto *equal-enough-accuracy* floats))
