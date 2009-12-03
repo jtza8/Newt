@@ -34,9 +34,9 @@
           (offset (+ (* x (x axis)) (* y (y axis)))))
       (dolist (shape shapes interval-set)
         (let ((projection (project-onto-axis shape axis)))
-          (interval (+ offset (left projection))
-                    (+ offset (right projection)))
-          (push projection interval-set))))))
+          (push (interval (+ offset (left projection))
+                          (+ offset (right projection)))
+                interval-set))))))
 
 (defmethod calculate-displacement ((matter matter) time)
   (with-slots (displacement velocity acceleration mass) matter
