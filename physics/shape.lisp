@@ -27,17 +27,14 @@
 
 (defmethod project-onto-axis ((shape shape) axis)
   (with-slots (x y points) shape
-    (loop
-       with interval = nil
-       for point in points
-       for projected = (+ (+ (* x (x axis)) (* y (y axis))); Offset
-                          (* (x point) (x axis))
-                          (* (y point) (y axis)))
-       if (eq interval nil)
-         do (setf interval (interval projected projected))
-       else
-         do (expand interval projected)
-       finally (return interval))))
+    (defun project (point)
+      (+ (+ (* x (x axis)) (* y (y axis)))
+         (* (x point) (x axis))
+         (* (y point) (y axis))))
+    (let* ((p (project (car points)))
+           (interval (interval p p)))
+      (dolist (point (cdr points) interval)
+        (expand interval (project point))))))
 
 (defmethod collides-with ((a shape) (b shape))
   (let ((axes (nunion (axes a) (axes b) :test #'uvector-equal)))
