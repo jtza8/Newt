@@ -59,9 +59,12 @@
                     (list (interval 82.0d0 282.0d0)
                           (interval 282.0d0 372.0d0)))))
 
-;(def-test-method test-collides-with ((test matter-test))
-;  (with-slots (simple-matter compound-matter) test
-;    (assert-true (collides-with simple-matter compound-matter))
-;    (setf (x compound-matter) 25
-;          (y compound-matter) 199)
-;    (assert-true (collides-with simple-matter compound-matter))))
+(def-test-method test-collides-with ((test matter-test))
+  (with-slots (simple-matter compound-matter) test
+    (assert-true (collides-with simple-matter compound-matter))
+    (setf (x compound-matter) 25
+          (y compound-matter) 19)
+    (assert-true (collides-with simple-matter compound-matter))
+    (setf (x compound-matter) 25
+          (y compound-matter) 199)
+    (assert-false (collides-with simple-matter compound-matter))))

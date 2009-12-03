@@ -27,7 +27,6 @@
     (dolist (shape shapes axes)
       (setf axes (union axes (axes shape) :test #'uvector-equal)))))
 
-; Need to convert to sets of intervals.
 (defmethod project-onto-axis ((matter matter) axis)
   (with-slots (shapes x y) matter
     (let ((interval-set '())
@@ -37,6 +36,13 @@
           (push (interval (+ offset (left projection))
                           (+ offset (right projection)))
                 interval-set))))))
+
+(defmethod collides-with ((a matter) (b matter))
+  (dolist (axis (union (axes a) (axes b) :test #'uvector-equal) t)
+    (let ((set-a (project-onto-axis a axis))
+          (set-b (project-onto-axis b axis)))
+      (unless (interval-sets-overlap set-a set-b)
+        (return nil)))))
 
 (defmethod calculate-displacement ((matter matter) time)
   (with-slots (displacement velocity acceleration mass) matter
